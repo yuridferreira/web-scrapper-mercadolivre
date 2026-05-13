@@ -1,0 +1,31 @@
+version: '3.9'
+services:
+  app:
+    build: .
+    command: npm run dev
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3000:3000'
+    environment:
+      - DATABASE_URL="postgresql://postgres:postgres@db:5432/promo_monitor?schema=public"
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - MERCADO_LIVRE_SITE_ID=MLB
+      - CRON_SCHEDULE="*/30 * * * *"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: promo_monitor
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:

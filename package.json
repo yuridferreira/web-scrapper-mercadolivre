@@ -1,0 +1,42 @@
+{
+  "name": "promo-monitor-bot",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "lint": "eslint . --ext .js",
+    "lint:fix": "eslint . --ext .js --fix",
+    "format": "prettier --write .",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev --name init",
+    "prisma:studio": "prisma studio"
+  },
+  "keywords": [
+    "mercado-livre",
+    "scraper",
+    "telegram",
+    "bot",
+    "promo-monitor"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "Backend Node.js para monitorar promoções de produtos no Mercado Livre e enviar alertas via Telegram",
+  "dependencies": {
+    "@prisma/client": "^5.0.0",
+    "axios": "^1.16.0",
+    "dotenv": "^16.0.0",
+    "express": "^5.2.1",
+    "node-cron": "^4.2.1",
+    "telegraf": "^4.12.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-node": "^11.1.0",
+    "nodemon": "^3.0.0",
+    "prettier": "^3.0.0",
+    "prisma": "^5.0.0"
+  }
+}

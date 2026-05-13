@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          String         @id @default(uuid())
+  name        String
+  targetPrice Float
+  currentPrice Float?
+  productUrl  String
+  notified    Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  priceHistory PriceHistory[]
+}
+
+model PriceHistory {
+  id        String   @id @default(uuid())
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  price     Float
+  createdAt DateTime @default(now())
+}
