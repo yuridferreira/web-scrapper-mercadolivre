@@ -11,16 +11,24 @@ class PriceMonitorJob {
   start() {
     logger.info('Agendando job de monitoramento', { schedule: env.cron.schedule });
 
-    this.task = cron.schedule(
-      env.cron.schedule,
-      async () => {
-        logger.info('Iniciando execução do job de monitoramento');
-        await monitorService.monitorProducts();
-      },
-      {
-        timezone: 'America/Sao_Paulo',
-      }
-    );
+    try {
+      this.task = cron.schedule(
+        env.cron.schedule,
+        async () => {
+          logger.info('Iniciando execução do job de monitoramento');
+          await monitorService.monitorProducts();
+        },
+        {
+          timezone: 'America/Sao_Paulo',
+        }
+      );
+    } catch (error) {
+      logger.error('Erro ao agendar job de monitoramento', {
+        schedule: env.cron.schedule,
+        error: error.message,
+      });
+      this.task = null;
+    }
   }
 
   stop() {

@@ -1,21 +1,25 @@
 const prisma = require('../database/prisma');
-const mercadoLivreService = require('./mercadoLivreService');
+const mercadoLivreScraper = require('./MercadoLivreScraperService');
 const telegramService = require('./telegramService');
 const logger = require('../utils/logger');
 
 class MonitorService {
   async monitorProducts() {
-    const products = await prisma.product.findMany({ where: { notified: false } });
+    const products = await prisma.product.findMany({
+      orderBy: { createdAt: 'asc' },
+    });
+
+    logger.info('Executando monitoramento de preços', { productsToMonitor: products.length });
 
     if (!products.length) {
-      logger.info('Nenhum produto ativo para monitoramento');
+      logger.info('Nenhum produto cadastrado para monitoramento');
       return;
     }
 
     await Promise.all(
       products.map(async (product) => {
         try {
-          const marketData = await mercadoLivreService.fetchCurrentPrice(product);
+          const marketData = await mercadoLivreScraper.fetchProductData(product.productUrl);
 
           await prisma.priceHistory.create({
             data: {
@@ -28,16 +32,23 @@ class MonitorService {
             where: { id: product.id },
             data: {
               currentPrice: marketData.price,
-              productUrl: marketData.productUrl,
             },
           });
 
-          if (marketData.price <= product.targetPrice) {
+          logger.info('Produto avaliado', {
+            productId: product.id,
+            name: product.name,
+            currentPrice: marketData.price,
+            targetPrice: product.targetPrice,
+            notified: product.notified,
+          });
+
+          if (!product.notified && marketData.price <= product.targetPrice) {
             await telegramService.sendPromotionNotification({
               name: product.name,
               currentPrice: marketData.price,
               targetPrice: product.targetPrice,
-              url: marketData.productUrl,
+              url: product.productUrl,
             });
 
             await prisma.product.update({
@@ -45,14 +56,14 @@ class MonitorService {
               data: { notified: true },
             });
 
-            logger.info('Produto marcado como notificado', {
+            logger.info('Alerta enviado para produto', {
               productId: product.id,
-              price: marketData.price,
+              currentPrice: marketData.price,
               targetPrice: product.targetPrice,
             });
           }
         } catch (error) {
-          logger.error('Erro ao avaliar produto', {
+          logger.error('Erro no monitoramento do produto', {
             productId: product.id,
             message: error.message,
           });

@@ -6,9 +6,18 @@ const logger = require('./utils/logger');
 const app = express();
 
 app.use(express.json());
+app.use((req, res, next) => {
+  logger.info('Requisição recebida', {
+    method: req.method,
+    url: req.originalUrl,
+  });
+  next();
+});
+
 app.get('/', (req, res) => {
   res.json({ status: 'ok', message: 'Promo Monitor Bot API está rodando' });
 });
+
 app.use('/products', productRoutes);
 
 app.use((req, res) => {
