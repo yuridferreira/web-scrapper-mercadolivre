@@ -21,10 +21,7 @@ module.exports = {
     botToken: process.env.TELEGRAM_BOT_TOKEN,
     chatId: process.env.TELEGRAM_CHAT_ID,
   },
-  marketplace: {
-    siteId: process.env.MERCADO_LIVRE_SITE_ID || 'MLB',
-  },
   cron: {
-    schedule: process.env.CRON_SCHEDULE || '*/30 * * * *',
+    schedule: process.env.CRON_SCHEDULE || '0 * * * *',
   },
 };

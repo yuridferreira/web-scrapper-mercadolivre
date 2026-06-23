@@ -1,10 +1,7 @@
 const logger = require('../utils/logger');
 
+// eslint-disable-next-line no-unused-vars
 function errorMiddleware(err, req, res, next) {
-  if (next) {
-    // Keeping next parameter for Express error middleware signature
-  }
-
   logger.error(err.message || 'Erro desconhecido', {
     stack: err.stack,
     statusCode: err.statusCode || 500,

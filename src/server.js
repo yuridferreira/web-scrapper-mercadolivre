@@ -5,19 +5,17 @@ const prisma = require('./database/prisma');
 const telegramService = require('./services/telegramService');
 const logger = require('./utils/logger');
 
-const server = app.listen(env.app.port, async () => {
+const server = app.listen(env.app.port, () => {
   logger.info(`Servidor iniciado na porta ${env.app.port}`);
 
-  // Inicializar bot do Telegram
-  try {
-    await telegramService.launch();
-    logger.info('Bot Telegram inicializado com sucesso');
-  } catch (error) {
+  // bot.launch() (polling) só resolve quando o bot é parado, então não
+  // podemos esperar por ela aqui — senão o cron de monitoramento nunca inicia.
+  telegramService.launch().catch((error) => {
     logger.error('Erro ao inicializar bot Telegram', {
       error: error.message,
       stack: error.stack,
     });
-  }
+  });
 
   priceMonitorJob.start();
 });

@@ -40,8 +40,16 @@ class MonitorService {
             name: product.name,
             currentPrice: marketData.price,
             targetPrice: product.targetPrice,
+            availability: marketData.availability,
             notified: product.notified,
           });
+
+          if (marketData.availability === 'out_of_stock') {
+            logger.info('Produto fora de estoque, alerta não enviado', {
+              productId: product.id,
+            });
+            return;
+          }
 
           if (!product.notified && marketData.price <= product.targetPrice) {
             await telegramService.sendPromotionNotification({

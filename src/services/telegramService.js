@@ -94,7 +94,7 @@ class TelegramService {
 
     // Comando de ajuda
     bot.command('ajuda', (ctx) => {
-      const message = `📋 Comandos disponíveis:\n\n/cadastrar - Cadastrar novo produto para monitoramento\n/listar - Ver todos os produtos monitorados\n/deletar - Remover um produto do monitoramento\n/ajuda - Mostrar esta mensagem\n\n💡 Como funciona:\n1. Use /cadastrar para adicionar um produto\n2. Informe nome, preço alvo e URL do Mercado Livre\n3. Eu verifico o preço a cada 30 minutos\n4. Você recebe notificação quando bater a meta!`;
+      const message = `📋 Comandos disponíveis:\n\n/cadastrar - Cadastrar novo produto para monitoramento\n/listar - Ver todos os produtos monitorados\n/deletar - Remover um produto do monitoramento\n/ajuda - Mostrar esta mensagem\n\n💡 Como funciona:\n1. Use /cadastrar para adicionar um produto\n2. Informe nome, preço alvo e URL do Mercado Livre\n3. Eu verifico o preço a cada 60 minutos\n4. Você recebe notificação quando bater a meta!`;
       ctx.reply(message);
     });
 
@@ -116,7 +116,7 @@ class TelegramService {
         let message = `📦 Produtos monitorados (${products.length}):\n\n`;
 
         products.forEach((product, index) => {
-          const status = product.notified ? '✅ Notificado' : '👀 Monitorando';
+          const status = product.notified ? 'Notificado ✅' : 'Monitorando 👀';
           const currentPrice = product.currentPrice ? formatCurrency(product.currentPrice) : 'Não verificado';
           const targetPrice = formatCurrency(product.targetPrice);
 

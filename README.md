@@ -10,7 +10,7 @@ O sistema permite:
 - consultar preços automaticamente a partir da URL do produto do Mercado Livre
 - salvar histórico de preços no banco
 - enviar notificação via Telegram quando o preço atingir ou ficar abaixo da meta
-- executar um cron job a cada 30 minutos
+- executar um cron job a cada hora
 
 ## Estrutura do projeto
 
@@ -64,8 +64,7 @@ Use o arquivo `.env.example` como base:
 - `DATABASE_URL` - conexão com PostgreSQL
 - `TELEGRAM_BOT_TOKEN` - token do bot Telegram
 - `TELEGRAM_CHAT_ID` - id do chat ou grupo do Telegram
-- `MERCADO_LIVRE_SITE_ID` - site do Mercado Livre (padrão: `MLB`)
-- `CRON_SCHEDULE` - agendamento do job (padrão: `*/30 * * * *`)
+- `CRON_SCHEDULE` - agendamento do job (padrão: `0 * * * *`, a cada hora — intervalos menores aumentam o risco de bloqueio anti-bot do Mercado Livre)
 
 ## Rotas
 
@@ -120,7 +119,7 @@ curl http://localhost:3000/products
 - Atualize com `PUT /products/:id`.
 - Apague com `DELETE /products/:id`.
 
-> O cron job será executado automaticamente a cada 30 minutos e enviará alertas via Telegram quando o preço atual estiver igual ou abaixo do target.
+> O cron job será executado automaticamente a cada hora e enviará alertas via Telegram quando o preço atual estiver igual ou abaixo do target.
 
 ## Bot Telegram
 
