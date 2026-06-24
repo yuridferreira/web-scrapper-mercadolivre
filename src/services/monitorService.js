@@ -62,6 +62,7 @@ class MonitorService {
                 currentPrice: marketData.price,
                 targetPrice: product.targetPrice,
                 url: product.productUrl,
+                chatId: product.telegramChatId || env.telegram.chatId,
               });
 
               await prisma.product.update({

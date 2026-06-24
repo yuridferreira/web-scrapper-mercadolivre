@@ -55,7 +55,8 @@ const productRegistrationScene = new Scenes.WizardScene(
 
     const productData = {
       ...ctx.wizard.state.productData,
-      productUrl
+      productUrl,
+      telegramChatId: String(ctx.chat.id),
     };
 
     try {
@@ -106,7 +107,7 @@ class TelegramService {
     // Comando para listar produtos
     bot.command('listar', async (ctx) => {
       try {
-        const products = await productService.listProducts();
+        const products = await productService.listProducts(String(ctx.chat.id));
 
         if (!products.length) {
           await ctx.reply('📭 Nenhum produto cadastrado ainda.\n\nUse /cadastrar para adicionar o primeiro produto!');
@@ -146,7 +147,7 @@ class TelegramService {
     // Comando para deletar produto
     bot.command('deletar', async (ctx) => {
       try {
-        const products = await productService.listProducts();
+        const products = await productService.listProducts(String(ctx.chat.id));
 
         if (!products.length) {
           await ctx.reply('📭 Nenhum produto cadastrado para deletar.');
@@ -185,7 +186,7 @@ class TelegramService {
         const productToDelete = products[choice - 1];
 
         try {
-          await productService.deleteProduct(productToDelete.id);
+          await productService.deleteProduct(productToDelete.id, String(ctx.chat.id));
           await ctx.reply(`✅ Produto "${productToDelete.name}" removido com sucesso!`);
           logger.info('Produto deletado via Telegram', { productId: productToDelete.id, userId: ctx.from.id });
 
@@ -206,17 +207,18 @@ class TelegramService {
     });
   }
 
-  async sendPromotionNotification({ name, currentPrice, targetPrice, url }) {
+  async sendPromotionNotification({ name, currentPrice, targetPrice, url, chatId }) {
     const message = `🔥 Promoção encontrada!\nProduto: ${name}\nPreço atual: ${formatCurrency(currentPrice)}\nMeta desejada: ${formatCurrency(targetPrice)}\nLink: ${url}`;
+    const destinationChatId = chatId || env.telegram.chatId;
 
     logger.info('Enviando notificação para Telegram', {
       name,
       currentPrice,
       targetPrice,
-      chatId: env.telegram.chatId,
+      chatId: destinationChatId,
     });
 
-    await bot.telegram.sendMessage(env.telegram.chatId, message, {
+    await bot.telegram.sendMessage(destinationChatId, message, {
       parse_mode: 'HTML',
       disable_web_page_preview: false,
     });

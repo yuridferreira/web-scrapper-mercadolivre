@@ -2,7 +2,7 @@ const prisma = require('../database/prisma');
 const ApiError = require('../utils/apiError');
 
 class ProductService {
-  async createProduct({ name, targetPrice, productUrl }) {
+  async createProduct({ name, targetPrice, productUrl, telegramChatId }) {
     const parsedTargetPrice = Number(targetPrice);
 
     return prisma.product.create({
@@ -12,12 +12,14 @@ class ProductService {
         currentPrice: null,
         productUrl: productUrl.trim(),
         notified: false,
+        telegramChatId: telegramChatId ?? null,
       },
     });
   }
 
-  async listProducts() {
+  async listProducts(telegramChatId) {
     return prisma.product.findMany({
+      where: telegramChatId ? { OR: [{ telegramChatId }, { telegramChatId: null }] } : undefined,
       orderBy: { createdAt: 'desc' },
       include: { priceHistory: true },
     });
@@ -69,10 +71,14 @@ class ProductService {
     });
   }
 
-  async deleteProduct(id) {
+  async deleteProduct(id, telegramChatId) {
     const existing = await prisma.product.findUnique({ where: { id } });
 
     if (!existing) {
+      throw new ApiError(404, 'Produto não encontrado.');
+    }
+
+    if (telegramChatId && existing.telegramChatId && existing.telegramChatId !== telegramChatId) {
       throw new ApiError(404, 'Produto não encontrado.');
     }
 
