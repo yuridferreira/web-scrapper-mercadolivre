@@ -1,9 +1,10 @@
-FROM node:20-alpine
+FROM node:20-bookworm-slim
 
 WORKDIR /usr/src/app
 
 COPY package*.json ./
 RUN npm install
+RUN npx playwright install --with-deps --only-shell chromium
 
 COPY . ./
 RUN npx prisma generate

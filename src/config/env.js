@@ -24,4 +24,7 @@ module.exports = {
   cron: {
     schedule: process.env.CRON_SCHEDULE || '0 * * * *',
   },
+  scraper: {
+    concurrency: Number(process.env.SCRAPER_CONCURRENCY) || 2,
+  },
 };

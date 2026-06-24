@@ -2,6 +2,7 @@ services:
   app:
     build: .
     command: npm run dev
+    shm_size: '1gb'
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
@@ -12,6 +13,7 @@ services:
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
       CRON_SCHEDULE: "0 * * * *"
+      SCRAPER_CONCURRENCY: ${SCRAPER_CONCURRENCY:-2}
     depends_on:
       - db
 
