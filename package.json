@@ -26,12 +26,14 @@
   "description": "Backend Node.js para monitorar promoções de produtos no Mercado Livre e enviar alertas via Telegram",
   "dependencies": {
     "@prisma/client": "^6.19.3",
-    "axios": "^1.16.0",
-    "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.6.1",
     "express": "^5.2.1",
     "node-cron": "^4.2.1",
+    "p-limit": "^3.1.0",
+    "playwright": "^1.61.1",
+    "playwright-extra": "^4.3.6",
     "prisma": "^6.19.3",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
     "telegraf": "^4.16.3"
   },
   "devDependencies": {

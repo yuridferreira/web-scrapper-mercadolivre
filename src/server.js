@@ -3,6 +3,7 @@ const env = require('./config/env');
 const priceMonitorJob = require('./jobs/priceMonitorJob');
 const prisma = require('./database/prisma');
 const telegramService = require('./services/telegramService');
+const mercadoLivreScraper = require('./services/MercadoLivreScraperService');
 const logger = require('./utils/logger');
 
 const server = app.listen(env.app.port, () => {
@@ -29,6 +30,13 @@ const shutdown = async () => {
     logger.info('Bot Telegram finalizado');
   } catch (error) {
     logger.error('Erro ao finalizar bot Telegram', { error: error.message });
+  }
+
+  try {
+    await mercadoLivreScraper.closeBrowser();
+    logger.info('Browser do scraper finalizado');
+  } catch (error) {
+    logger.error('Erro ao finalizar browser do scraper', { error: error.message });
   }
 
   await prisma.$disconnect();
