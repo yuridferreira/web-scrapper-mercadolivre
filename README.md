@@ -56,6 +56,41 @@ O sistema permite:
 - `npm run lint:fix` - corrige problemas de lint automaticamente
 - `npm run format` - formata o código com Prettier
 
+## Comandos Docker úteis
+
+Operação do dia a dia (`app` = serviço da aplicação, `db` = Postgres):
+
+- `docker compose up -d` - sobe tudo em background
+- `docker compose ps` - ver status dos containers
+- `docker compose down` - para tudo (mantém os dados do volume do Postgres)
+- `docker compose restart app` - reinicia só a aplicação (ex: depois de regenerar o Prisma Client)
+- `docker compose logs -f app` - acompanha os logs em tempo real
+- `docker compose logs app --tail 50` - vê as últimas 50 linhas de log
+
+Quando mudar `Dockerfile`, `package.json` ou outra dependência da imagem:
+
+- `docker compose build app` - reconstrói a imagem
+- `docker compose up -d --build app` - reconstrói e já reinicia
+
+Quando mudar `prisma/schema.prisma` e rodar `npx prisma migrate dev` no host:
+o container usa um volume de `node_modules` isolado do seu, então o Prisma
+Client dele **não** atualiza sozinho. Depois de migrar no host, rode:
+
+- `docker compose exec app npx prisma generate` - regenera o Prisma Client dentro do container
+- `docker compose restart app` - reinicia pra carregar o client novo
+
+Banco de dados:
+
+- `docker compose exec db psql -U postgres -d promo_monitor` - abre um psql interativo
+- `docker compose exec db psql -U postgres -d promo_monitor -c 'SELECT * FROM "Product";'` - roda uma query direta
+
+Debug / comando avulso dentro do container:
+
+- `docker compose exec app sh` - abre um shell dentro do container
+- `docker compose exec app node -e "..."` - roda um script Node avulso com o ambiente do container
+
+> ⚠️ `docker compose down -v` remove também o volume do Postgres — apaga todos os produtos e o histórico de preços. Só usar se for mesmo pra zerar o banco.
+
 ## Variáveis de ambiente
 
 Use o arquivo `.env.example` como base:
